@@ -1,0 +1,36 @@
+# Assignment's B1 Complete-the-Code (simple solution)
+import csv
+import io
+
+RAW = """station,date,pm25
+Adyar,2026-10-01,48
+Adyar,2026-10-02,NA
+Adyar,2026-10-03,
+Guindy,2026-10-01,95
+Guindy,2026-10-02,-5
+Guindy,2026-10-03,121
+Guindy,2026-10-04,1200
+"""
+
+def load_clean(text):
+    rows = []
+    reader = csv.DictReader(io.StringIO(text))
+    for row in reader:
+        value = row["pm25"].strip()
+        if value == "" or value.upper() == "NA":
+            continue
+        pm25 = float(value)
+        if pm25 < 0 or pm25 > 999:
+            continue
+        rows.append((row["station"], row["date"], pm25))
+    return rows
+
+def min_max(values):
+    low, high = min(values), max(values)
+    if high == low:
+        return [0.0 for value in values]
+    return [round((value - low) / (high - low), 3) for value in values]
+
+clean = load_clean(RAW)
+print(clean)
+print(min_max([pm for _, _, pm in clean]))
